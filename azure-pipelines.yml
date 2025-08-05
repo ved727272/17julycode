@@ -28,18 +28,26 @@ stages:
               backendAzureRmStorageAccountName: 'xyzabcdefgh'
               backendAzureRmContainerName: 'brijesh1'
               backendAzureRmKey: 'raman.tfstate'
-
+         
+  - stage: validationandplan
+    displayName: validation
+    jobs:
+      - job: planning
+        displayName: validation
+        steps:
           - task: TerraformTask@5
             displayName: terraform validate
             inputs:
               provider: azurerm
               command: validate
-
+              
           - task: TerraformTask@5
             displayName: Tarrform plan
             inputs:
               provider: azurerm
               command: plan
-              environmentServiceNameAzureRM: newpipeline
+              environmentServiceNameAzureRM: newpipeline    
+              
+
                   
     
