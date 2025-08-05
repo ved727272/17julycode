@@ -36,11 +36,8 @@ stages:
             displayName: terraform Apply
             inputs:
               provider: 'azurerm'
-              command: apply   
-
-            
-               
-
+              command: apply
+              environmentServiceNameAzureRM: 'newpipeline'
 
 
 
