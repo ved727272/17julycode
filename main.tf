@@ -1,5 +1,5 @@
-resource "azurerm_resource_group" "rg" {
-    name = "ramanrg1"
+resource "azurerm_resource_group" "rg1" {
+    name = "ramanrg2"
     location = "westus"
       
     }
