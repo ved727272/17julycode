@@ -1,4 +1,4 @@
-trigger: 
+trigger:
   - main
 
 pool:
@@ -6,40 +6,40 @@ pool:
 
 stages:
   - stage: planning
-    displayName: planning
+    displayName: raman pipeline
     jobs:
-      - job: terraform
-        displayName: terraform installer
+      - job: planning
+        displayName: planning job
         steps:
           - task: TerraformInstaller@1
+            displayName: terraform installer
             inputs:
-              terraformVersion: latest 
-          - task: TerraformTask@5
-            displayName: Terraform Init
+              terraformVersion: latest
+
+          - task: TerraformTask@5  
+            displayName: terraform Init
             inputs:
               provider: 'azurerm'
-              command: init
+              command: 'init'
               backendAzureRmUseEntraIdForAuthentication: false
               backendServiceArm: 'newpipeline'
               backendAzureRmOverrideSubscriptionID: 'c69268aa-c88b-494c-aa80-775984104d2a'
               backendAzureRmResourceGroupName: 'rg-gunjan-cicd'
               backendAzureRmStorageAccountName: 'xyzabcdefgh'
-              backendAzureRmContainerName: 'raman'
-              backendAzureRmKey: 'brijesh.tfstate'
+              backendAzureRmContainerName: 'brijesh1'
+              backendAzureRmKey: 'raman.tfstate'
 
           - task: TerraformTask@5
-            displayName: terraform Validate
+            displayName: terraform validate
             inputs:
-              provider: 'azurerm'
+              provider: azurerm
               command: validate
+
           - task: TerraformTask@5
-            displayName: terraform Apply
+            displayName: Tarrform plan
             inputs:
-              provider: 'azurerm'
-              command: apply
-              environmentServiceNameAzureRM: 'newpipeline'
-
-
-
-
-
+              provider: azurerm
+              command: plan
+              environmentServiceNameAzureRM: newpipeline
+                  
+    
