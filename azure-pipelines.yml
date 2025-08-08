@@ -4,6 +4,29 @@ trigger:
 pool:
   name: Jasus
 
+variables:
+  svc: 'newpipeline'  
+  subsid: 'c69268aa-c88b-494c-aa80-775984104d2a'
+
+# parameters:
+#   - name: environment
+#     type: string
+#     default: dev
+#     values:
+#       - dev
+#       - prod
+#       - preprod
+
+#   - name: init
+#     type: boolean 
+#     default: false
+
+#   - name: plan
+#     type: boolean
+#     default: false
+    
+
+
 stages:
   - stage: planning
     displayName: raman pipeline
@@ -22,8 +45,8 @@ stages:
               provider: 'azurerm'
               command: 'init'
               backendAzureRmUseEntraIdForAuthentication: false
-              backendServiceArm: 'newpipeline'
-              backendAzureRmOverrideSubscriptionID: 'c69268aa-c88b-494c-aa80-775984104d2a'
+              backendServiceArm: $(svc)
+              backendAzureRmOverrideSubscriptionID: $(subsid)
               backendAzureRmResourceGroupName: 'rg-gunjan-cicd'
               backendAzureRmStorageAccountName: 'xyzabcdefgh'
               backendAzureRmContainerName: 'brijesh1'
