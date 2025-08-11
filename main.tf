@@ -4,3 +4,9 @@ resource "azurerm_resource_group" "rg1" {
       
     }
   
+resource "azurerm_resource_group" "rg3" {
+    name = "ramanrg3"
+    location = "westus"
+      
+    }
+  
