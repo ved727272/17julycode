@@ -1,43 +1,20 @@
 trigger:
-  - main
+  branches:
+    include:
+      - main
+      - feature/*
 
 pool:
   name: Jasus
-
-# variables:
-#   svc: $(svc)
-#   subsid: $(subsid)
 
 variables:
   svc: 'newpipeline'  
   subsid: 'c69268aa-c88b-494c-aa80-775984104d2a'
 
-parameters:
-  # - name: environment
-  #   type: string
-  #   default: dev
-  #   values:
-  #     - dev
-  #     - prod
-  #     - preprod
-
-  - name: init
-    type: boolean 
-    default: false
-
-  - name: plan
-    type: boolean
-    default: false
-
-  - name: apply
-    type: boolean
-    default: false
-    
-
-
 stages:
   - stage: planning
-    displayName: raman pipeline
+    displayName: terraform plan stage
+    condition: or(eq(variables['Build.SourceBranchName'], 'main'), startsWith(variables['Build.SourceBranchName'], 'feature/'))
     jobs:
       - job: planning
         displayName: planning job
@@ -86,10 +63,16 @@ stages:
               
   - stage: 
     displayName: apply
+    dependsOn: planning
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
     jobs:
       - job: Apply
         displayName: apply
         steps:
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: latest
+
           - task: TerraformTask@5  
             displayName: terraform Init
             # condition: ${{parameters.init}}
