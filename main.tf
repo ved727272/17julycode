@@ -1,11 +1,11 @@
-resource "azurerm_resource_group" "rg1" {
-    name = "ramanrg2"
+resource "azurerm_resource_group" "rg7" {
+    name = "ramanrg7"
     location = "westus"
       
     }
   
-resource "azurerm_resource_group" "rg3" {
-    name = "ramanrg3"
+resource "azurerm_resource_group" "rg8" {
+    name = "ramanrg8"
     location = "westus"
       
     }
