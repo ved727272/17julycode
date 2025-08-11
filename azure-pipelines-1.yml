@@ -1,43 +1,75 @@
 trigger:
-- main
+  branches:
+    include:
+      - main
+      - feature/*
 
 pool:
   name: Jasus
 
+variables:
+  svc: 'newpipeline'  
+  subsid: 'c69268aa-c88b-494c-aa80-775984104d2a'
+
 stages:
-  - stage: Planning
-    displayName: planning
-    jobs: 
-      - job: terrraform
-        displayName: terraform installer
+  - stage: planning
+    displayName: 'Terraform Plan Stage'
+    condition: or(eq(variables['Build.SourceBranchName'], 'main'), startsWith(variables['Build.SourceBranchName'], 'feature/'))
+    jobs:
+      - job: planning
         steps:
           - task: TerraformInstaller@1
-            displayName: terraform install
             inputs:
               terraformVersion: latest
 
           - task: TerraformTask@5
-            displayName: Terraform Init
+            displayName: 'Terraform Init'
             inputs:
               provider: 'azurerm'
-              command: init
+              command: 'init'
               backendAzureRmUseEntraIdForAuthentication: false
-              backendServiceArm: 'newpipeline'
-              backendAzureRmOverrideSubscriptionID: 'c69268aa-c88b-494c-aa80-775984104d2a'
+              backendServiceArm: $(svc)
+              backendAzureRmOverrideSubscriptionID: $(subsid)
               backendAzureRmResourceGroupName: 'rg-gunjan-cicd'
               backendAzureRmStorageAccountName: 'xyzabcdefgh'
-              backendAzureRmContainerName: 'raman'
-              backendAzureRmKey: 'brijesh.tfstate'    
+              backendAzureRmContainerName: 'brijesh1'
+              backendAzureRmKey: 'raman.tfstate'
 
-          - task: CmdLine@2
-            displayName: Linter
+          - task: TerraformTask@5
+            displayName: 'Terraform Plan'
             inputs:
-              script: |
-                tflint
+              provider: azurerm
+              command: plan
+              environmentServiceNameAzureRM: '$(svc)'
 
-          - task: CmdLine@2
-            displayName: tfsec
+  - stage: apply
+    displayName: 'Terraform Apply Stage'
+    dependsOn: planning
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
+    jobs:
+      - job: apply
+        steps:
+          - task: TerraformInstaller@1
             inputs:
-              script: |
-                tfsec
-                     
+              terraformVersion: latest
+
+          - task: TerraformTask@5
+            displayName: 'Terraform Init'
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              backendAzureRmUseEntraIdForAuthentication: false
+              backendServiceArm: $(svc)
+              backendAzureRmOverrideSubscriptionID: $(subsid)
+              backendAzureRmResourceGroupName: 'rg-gunjan-cicd'
+              backendAzureRmStorageAccountName: 'xyzabcdefgh'
+              backendAzureRmContainerName: 'brijesh1'
+              backendAzureRmKey: 'raman.tfstate'
+
+          - task: TerraformTask@5
+            displayName: 'Terraform Apply'
+            inputs:
+              provider: azurerm
+              command: apply
+              environmentServiceNameAzureRM: '$(svc)'
+              commandOptions: '-auto-approve'
