@@ -1,10 +1,7 @@
 trigger:
-  branches:
-    include:
-      - main
-      - feature/*
+  - main
 
-pool:
+pool: 
   name: Jasus
 
 variables:
@@ -12,58 +9,53 @@ variables:
   subsid: 'c69268aa-c88b-494c-aa80-775984104d2a'
 
 stages:
-  - stage: planning
-    displayName: terraform plan stage
+  - stage: terraformplanning
     condition: or(eq(variables['Build.SourceBranchName'], 'main'), startsWith(variables['Build.SourceBranchName'], 'feature/'))
+    displayName: Terraform planning
     jobs:
       - job: planning
-        displayName: planning job
+        displayName: planning
         steps:
           - task: TerraformInstaller@1
-            displayName: terraform installer
+            displayName: terraform install
             inputs:
               terraformVersion: latest
-
-          - task: TerraformTask@5  
-            displayName: terraform Init
-            # condition: ${{parameters.init}}
+          - task: TerraformTask@5
+            displayName: terraform init
             inputs:
-              provider: 'azurerm'
-              command: 'init'
+              provider: azurerm
+              command: init
               backendAzureRmUseEntraIdForAuthentication: false
-              backendServiceArm: $(svc)
-              backendAzureRmOverrideSubscriptionID: $(subsid)
+              backendServiceArm: '$(svc)'
+              backendAzureRmOverrideSubscriptionID: '$(subsid)'
               backendAzureRmResourceGroupName: 'rg-gunjan-cicd'
               backendAzureRmStorageAccountName: 'xyzabcdefgh'
               backendAzureRmContainerName: 'brijesh1'
               backendAzureRmKey: 'raman.tfstate'
 
           - task: TerraformTask@5
-            displayName: terraform Plan
-            # condition: '${{parameters.plan}}'
+            displayName: terraform plan
             inputs:
               provider: azurerm
               command: plan
-              environmentServiceNameAzureRM: '$(svc)'
+              environmentServiceNameAzureRM: newpipeline
 
-                 
-         
-  - stage: validationandplan
+  - stage: Validationplanninga
     pool: server
     displayName: validation
     jobs:
-      - job: validation
-        displayName: validation
+      - job: validationplanning
+        displayName: validationplan  
         steps:
           - task: ManualValidation@1
-            displayName: manualvalidate
+            displayName: manualvalidation
             inputs:
               notifyUsers: 'Brijesh@psutar43gmail.onmicrosoft.com'
-              allowApproversToApproveTheirOwnRuns: false
-              
+              allowApproversToApproveTheirOwnRuns: false       
+  
   - stage: 
     displayName: apply
-    dependsOn: planning
+    dependsOn: terraformplanning
     condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
     jobs:
       - job: Apply
@@ -75,7 +67,6 @@ stages:
 
           - task: TerraformTask@5  
             displayName: terraform Init
-            # condition: ${{parameters.init}}
             inputs:
               provider: 'azurerm'
               command: 'init'
@@ -93,8 +84,4 @@ stages:
               provider: azurerm
               command: apply
               environmentServiceNameAzureRM: '$(svc)'
-                  
-              
 
-                  
-    
