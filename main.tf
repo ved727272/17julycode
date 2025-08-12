@@ -16,3 +16,9 @@ resource "azurerm_resource_group" "rg10" {
     location = "westus"
       
     }
+
+resource "azurerm_resource_group" "rg11" {
+    name = "ramanrg11"
+    location = "westus"
+      
+    }

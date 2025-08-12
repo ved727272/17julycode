@@ -13,7 +13,7 @@ variables:
 
 stages:
   - stage: terraformplanning
-    condition: or(eq(variables['Build.SourceBranchName'], 'main'), startsWith(variables['Build.SourceBranchName'], 'feature/'))
+    condition: or(eq(variables['Build.SourceBranchName'], 'main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
     displayName: Terraform planning
     jobs:
       - job: planning
