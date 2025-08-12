@@ -11,8 +11,8 @@ resource "azurerm_resource_group" "rg8" {
     }
 
 
-resource "azurerm_resource_group" "rg9" {
-    name = "ramanrg9"
+resource "azurerm_resource_group" "rg10" {
+    name = "ramanrg10"
     location = "westus"
       
     }
