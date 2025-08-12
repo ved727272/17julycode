@@ -1,5 +1,8 @@
 trigger:
-  - main
+ branches:
+   include:
+     - main
+     - feature/*
 
 pool: 
   name: Jasus
@@ -40,19 +43,7 @@ stages:
               command: plan
               environmentServiceNameAzureRM: newpipeline
 
-  - stage: Validationplanninga
-    pool: server
-    displayName: validation
-    jobs:
-      - job: validationplanning
-        displayName: validationplan  
-        steps:
-          - task: ManualValidation@1
-            displayName: manualvalidation
-            inputs:
-              notifyUsers: 'Brijesh@psutar43gmail.onmicrosoft.com'
-              allowApproversToApproveTheirOwnRuns: false       
-  
+
   - stage: 
     displayName: apply
     dependsOn: terraformplanning
